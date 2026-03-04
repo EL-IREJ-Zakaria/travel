@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'src/api/travel_api.dart';
+
 void main() {
   runApp(const ImmersiveDestinationApp());
 }
@@ -24,8 +26,31 @@ class ImmersiveDestinationApp extends StatelessWidget {
   }
 }
 
-class ImmersiveDestinationScreen extends StatelessWidget {
+class ImmersiveDestinationScreen extends StatefulWidget {
   const ImmersiveDestinationScreen({super.key});
+
+  @override
+  State<ImmersiveDestinationScreen> createState() =>
+      _ImmersiveDestinationScreenState();
+}
+
+class _ImmersiveDestinationScreenState
+    extends State<ImmersiveDestinationScreen> {
+  late final TravelApi _travelApi;
+  late Future<DestinationData> _destinationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _travelApi = TravelApi();
+    _destinationFuture = _travelApi.fetchDestinationData();
+  }
+
+  void _retryFetch() {
+    setState(() {
+      _destinationFuture = _travelApi.fetchDestinationData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +138,22 @@ class ImmersiveDestinationScreen extends StatelessWidget {
             right: 12,
             top: cardTop,
             bottom: 46,
-            child: _MainDestinationCard(),
+            child: FutureBuilder<DestinationData>(
+              future: _destinationFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const _LoadingDestinationCard();
+                }
+                if (snapshot.hasError) {
+                  return _ErrorDestinationCard(onRetry: _retryFetch);
+                }
+                final destinationData = snapshot.data;
+                if (destinationData == null) {
+                  return _ErrorDestinationCard(onRetry: _retryFetch);
+                }
+                return _MainDestinationCard(destinationData: destinationData);
+              },
+            ),
           ),
           Positioned(
             left: 0,
@@ -150,20 +190,19 @@ class ImmersiveDestinationScreen extends StatelessWidget {
 }
 
 class _MainDestinationCard extends StatelessWidget {
+  const _MainDestinationCard({required this.destinationData});
+
+  final DestinationData destinationData;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF183028).withValues(alpha: 0.12),
-            blurRadius: 24,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
+    final resident = destinationData.resident;
+    final avatarAsset = resident.avatarAsset.isNotEmpty
+        ? resident.avatarAsset
+        : 'assets/images/private_jet.jpg';
+    final flights = destinationData.flights;
+
+    return _CardShell(
       child: Column(
         children: [
           Padding(
@@ -173,7 +212,10 @@ class _MainDestinationCard extends StatelessWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -191,7 +233,7 @@ class _MainDestinationCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        'RESIDENT',
+                        resident.role.toUpperCase(),
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           letterSpacing: 1.0,
@@ -206,15 +248,15 @@ class _MainDestinationCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/private_jet.jpg'),
+                          image: DecorationImage(
+                            image: AssetImage(avatarAsset),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Lisa Nilman',
+                        resident.name,
                         style: GoogleFonts.poppins(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -230,13 +272,29 @@ class _MainDestinationCard extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 22, 24, 88),
-              child: Column(
-                children: const [
-                  _FlightRow(time: '2:45 PM', price: '1 USD'),
-                  SizedBox(height: 22),
-                  _FlightRow(time: '11:11 PM', price: '1 USD'),
-                ],
-              ),
+              child: flights.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No flights available',
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF9CA7A2),
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: flights.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 22),
+                      itemBuilder: (context, index) {
+                        final flight = flights[index];
+                        return _FlightRow(
+                          time: flight.time,
+                          price: flight.formattedPrice,
+                        );
+                      },
+                    ),
             ),
           ),
         ],
@@ -245,11 +303,58 @@ class _MainDestinationCard extends StatelessWidget {
   }
 }
 
+class _LoadingDestinationCard extends StatelessWidget {
+  const _LoadingDestinationCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _CardShell(
+      child: Center(child: CircularProgressIndicator(color: Color(0xFF41D96A))),
+    );
+  }
+}
+
+class _ErrorDestinationCard extends StatelessWidget {
+  const _ErrorDestinationCard({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return _CardShell(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Could not load destination data',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF9CA7A2),
+                ),
+              ),
+              const SizedBox(height: 14),
+              FilledButton(
+                onPressed: onRetry,
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF41D96A),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _FlightRow extends StatelessWidget {
-  const _FlightRow({
-    required this.time,
-    required this.price,
-  });
+  const _FlightRow({required this.time, required this.price});
 
   final String time;
   final String price;
@@ -276,6 +381,30 @@ class _FlightRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CardShell extends StatelessWidget {
+  const _CardShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF183028).withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
@@ -309,11 +438,7 @@ class _RoundIconButton extends StatelessWidget {
             width: 1.2,
           ),
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: iconSize,
-        ),
+        child: Icon(icon, color: Colors.white, size: iconSize),
       ),
     );
   }

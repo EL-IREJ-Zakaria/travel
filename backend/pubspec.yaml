@@ -1,0 +1,11 @@
+name: travell_backend
+description: Backend API for the Travell Flutter app.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4

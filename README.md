@@ -1,16 +1,26 @@
-# travell
+# Travell
 
-A new Flutter project.
+Flutter frontend + Dart backend for destination/flight data.
 
-## Getting Started
+## Run Backend
 
-This project is a starting point for a Flutter application.
+```bash
+cd backend
+dart pub get
+dart run bin/server.dart
+```
 
-A few resources to get you started if this is your first Flutter project:
+Default backend URL: `http://localhost:8080`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Run Flutter App
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run
+```
+
+Optional override for API URL:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://localhost:8080
+```

@@ -70,7 +70,7 @@ class _SafrSplashScreenState extends State<SafrSplashScreen>
     _logoController.forward();
     _drawController.forward();
 
-    _navigationTimer = Timer(const Duration(seconds: 2), () {
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         PageRouteBuilder<void>(
@@ -421,27 +421,536 @@ class _NoisePainter extends CustomPainter {
   }
 }
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _floatController;
+  late final Animation<double> _floatOffset;
+
+  @override
+  void initState() {
+    super.initState();
+    _floatController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+    _floatOffset = Tween<double>(begin: -7, end: 7).animate(
+      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _floatController.dispose();
+    super.dispose();
+  }
+
+  void _openHome() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 360),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const HomeScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.03, 0),
+                end: Offset.zero,
+              ).animate(curved),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      backgroundColor: const Color(0xFFDDEBDD),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 390, maxHeight: 844),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(42),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(42),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFFEAF7EC),
+                        Color(0xFFD6F0DE),
+                        Color(0xFFCBE8D5),
+                      ],
+                      stops: [0.0, 0.55, 1.0],
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: _OnboardingBackdropPainter(),
+                        ),
+                      ),
+                      SafeArea(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'It\'s a Big World',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(
+                                        0xCC132021,
+                                      ), // 80% dark
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 15,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Out There,\nGo Explore',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFF0C1717),
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 38,
+                                      height: 0.98,
+                                      letterSpacing: -0.6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Expanded(
+                                    child: Center(
+                                      child: AnimatedBuilder(
+                                        animation: _floatOffset,
+                                        builder: (context, child) {
+                                          return Transform.translate(
+                                            offset: Offset(0, _floatOffset.value),
+                                            child: child,
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          width: constraints.maxWidth,
+                                          child: const AspectRatio(
+                                            aspectRatio: 0.92,
+                                            child: CustomPaint(
+                                              painter: _TravelScenePainter(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Center(
+                                    child: FractionallySizedBox(
+                                      widthFactor: 0.8,
+                                      child: _GetStartedButton(
+                                        onPressed: _openHome,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Center(
+                                    child: TextButton(
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: const Color(
+                                          0xFF57706D,
+                                        ),
+                                        textStyle: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      child: const Text('Privacy Policy'),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OnboardingBackdropPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final topGlow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Colors.white.withValues(alpha: 0.4),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(
+          center: Offset(size.width * 0.7, size.height * 0.12),
+          radius: size.width * 0.55,
+        ),
+      );
+    canvas.drawRect(Offset.zero & size, topGlow);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _TravelScenePainter extends CustomPainter {
+  const _TravelScenePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final skyRect = Rect.fromLTWH(0, 0, size.width, size.height * 0.64);
+    final sky = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFFEAF8EE),
+          const Color(0xFFD6F2E0),
+        ],
+      ).createShader(skyRect);
+    canvas.drawRect(skyRect, sky);
+
+    final sunPaint = Paint()..color = const Color(0xFFF4FFD2);
+    canvas.drawCircle(
+      Offset(size.width * 0.83, size.height * 0.16),
+      size.width * 0.085,
+      sunPaint,
+    );
+
+    final mountainFar = Path()
+      ..moveTo(0, size.height * 0.62)
+      ..quadraticBezierTo(
+        size.width * 0.18,
+        size.height * 0.49,
+        size.width * 0.34,
+        size.height * 0.6,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.48,
+        size.height * 0.42,
+        size.width * 0.65,
+        size.height * 0.58,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.81,
+        size.height * 0.48,
+        size.width,
+        size.height * 0.61,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      mountainFar,
+      Paint()..color = const Color(0xFFB8E2C4),
+    );
+
+    final mountainMid = Path()
+      ..moveTo(0, size.height * 0.71)
+      ..quadraticBezierTo(
+        size.width * 0.26,
+        size.height * 0.54,
+        size.width * 0.47,
+        size.height * 0.71,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.7,
+        size.height * 0.53,
+        size.width,
+        size.height * 0.72,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      mountainMid,
+      Paint()..color = const Color(0xFF84CBA1),
+    );
+
+    final mountainFront = Path()
+      ..moveTo(0, size.height * 0.82)
+      ..quadraticBezierTo(
+        size.width * 0.3,
+        size.height * 0.7,
+        size.width * 0.56,
+        size.height * 0.82,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.76,
+        size.height * 0.74,
+        size.width,
+        size.height * 0.84,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      mountainFront,
+      Paint()..color = const Color(0xFF489467),
+    );
+
+    final foregroundHill = Path()
+      ..moveTo(0, size.height * 0.9)
+      ..quadraticBezierTo(
+        size.width * 0.2,
+        size.height * 0.82,
+        size.width * 0.44,
+        size.height * 0.9,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.69,
+        size.height * 0.82,
+        size.width,
+        size.height * 0.91,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      foregroundHill,
+      Paint()..color = const Color(0xFF1E6B4C),
+    );
+
+    final cx = size.width * 0.54;
+    final bodyTop = size.height * 0.64;
+    final bodyHeight = size.height * 0.2;
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(cx, size.height * 0.88),
+        width: size.width * 0.16,
+        height: size.height * 0.035,
+      ),
+      Paint()..color = Colors.black.withValues(alpha: 0.14),
+    );
+
+    canvas.drawCircle(
+      Offset(cx, bodyTop - size.height * 0.05),
+      size.width * 0.035,
+      Paint()..color = const Color(0xFFEBC8A4),
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(cx, bodyTop + bodyHeight * 0.34),
+          width: size.width * 0.11,
+          height: bodyHeight * 0.62,
+        ),
+        const Radius.circular(14),
+      ),
+      Paint()..color = const Color(0xFF1B5846),
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(cx - size.width * 0.058, bodyTop + bodyHeight * 0.34),
+          width: size.width * 0.11,
+          height: bodyHeight * 0.58,
+        ),
+        const Radius.circular(12),
+      ),
+      Paint()..color = const Color(0xFFC5D454),
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(cx - size.width * 0.065, bodyTop + bodyHeight * 0.26),
+          width: size.width * 0.035,
+          height: bodyHeight * 0.44,
+        ),
+        const Radius.circular(20),
+      ),
+      Paint()..color = const Color(0xFFA3BB42),
+    );
+
+    final legsPaint = Paint()..color = const Color(0xFF1A3E36);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(cx - size.width * 0.015, bodyTop + bodyHeight * 0.76),
+          width: size.width * 0.035,
+          height: bodyHeight * 0.42,
+        ),
+        const Radius.circular(8),
+      ),
+      legsPaint,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(cx + size.width * 0.03, bodyTop + bodyHeight * 0.79),
+          width: size.width * 0.035,
+          height: bodyHeight * 0.4,
+        ),
+        const Radius.circular(8),
+      ),
+      legsPaint,
+    );
+
+    final cameraCenter = Offset(size.width * 0.2, size.height * 0.29);
+    canvas.save();
+    canvas.translate(cameraCenter.dx, cameraCenter.dy);
+    canvas.rotate(-0.12);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: const Offset(0, 0),
+          width: size.width * 0.11,
+          height: size.width * 0.072,
+        ),
+        const Radius.circular(8),
+      ),
+      Paint()..color = const Color(0xFF2A8F70),
+    );
+    canvas.drawCircle(
+      const Offset(0, 0),
+      size.width * 0.018,
+      Paint()..color = const Color(0xFFF6FBF8),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(-size.width * 0.02, -size.width * 0.045),
+          width: size.width * 0.045,
+          height: size.width * 0.012,
+        ),
+        const Radius.circular(4),
+      ),
+      Paint()..color = const Color(0xFF4EBF98),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _GetStartedButton extends StatefulWidget {
+  const _GetStartedButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  State<_GetStartedButton> createState() => _GetStartedButtonState();
+}
+
+class _GetStartedButtonState extends State<_GetStartedButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 56,
+      child: Material(
+        color: _isPressed ? const Color(0xFF1D976B) : const Color(0xFF22B07D),
+        elevation: _isPressed ? 2 : 8,
+        shadowColor: const Color(0xFF0F3D3E).withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(30),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(30),
+          onHighlightChanged: (value) {
+            setState(() => _isPressed = value);
+          },
+          onTap: widget.onPressed,
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Get Started',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white,
+                  size: 19,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF0F3D3E), Color(0xFF176C5A)],
+            colors: [Color(0xFF0F3D3E), Color(0xFF1D7D63)],
           ),
         ),
         child: Center(
           child: Text(
-            'Onboarding',
+            'Safr Home',
             style: GoogleFonts.inter(
               color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              fontSize: 30,
               letterSpacing: 0.4,
             ),
           ),

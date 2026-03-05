@@ -56,15 +56,9 @@ class _SafrSplashScreenState extends State<SafrSplashScreen>
       duration: const Duration(milliseconds: 1200),
     )..repeat();
 
-    _fade = CurvedAnimation(
-      parent: _logoController,
-      curve: Curves.easeOut,
-    );
+    _fade = CurvedAnimation(parent: _logoController, curve: Curves.easeOut);
     _scale = Tween<double>(begin: 0.95, end: 1).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutCubic),
     );
 
     _logoController.forward();
@@ -115,11 +109,7 @@ class _SafrSplashScreenState extends State<SafrSplashScreen>
               ),
             ),
           ),
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _MountainMistPainter(),
-            ),
-          ),
+          Positioned.fill(child: CustomPaint(painter: _MountainMistPainter())),
           Positioned.fill(
             child: IgnorePointer(
               child: BackdropFilter(
@@ -129,9 +119,7 @@ class _SafrSplashScreenState extends State<SafrSplashScreen>
             ),
           ),
           Positioned.fill(
-            child: CustomPaint(
-              painter: _NoisePainter(opacity: 0.035),
-            ),
+            child: CustomPaint(painter: _NoisePainter(opacity: 0.035)),
           ),
           SafeArea(
             child: SizedBox.expand(
@@ -377,16 +365,19 @@ class _MountainMistPainter extends CustomPainter {
     canvas.drawPath(rightMountain, mountainPaint);
 
     final mist = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: 0.13),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromLTWH(0, size.height * 0.56, size.width, size.height * 0.34),
-      );
+      ..shader =
+          LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white.withValues(alpha: 0.13), Colors.transparent],
+          ).createShader(
+            Rect.fromLTWH(
+              0,
+              size.height * 0.56,
+              size.width,
+              size.height * 0.34,
+            ),
+          );
     canvas.drawRect(
       Rect.fromLTWH(0, size.height * 0.56, size.width, size.height * 0.34),
       mist,
@@ -523,8 +514,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         child: LayoutBuilder(
                           builder: (context, constraints) {
                             return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -558,7 +550,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                         animation: _floatOffset,
                                         builder: (context, child) {
                                           return Transform.translate(
-                                            offset: Offset(0, _floatOffset.value),
+                                            offset: Offset(
+                                              0,
+                                              _floatOffset.value,
+                                            ),
                                             child: child,
                                           );
                                         },
@@ -622,17 +617,15 @@ class _OnboardingBackdropPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final topGlow = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          Colors.white.withValues(alpha: 0.4),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromCircle(
-          center: Offset(size.width * 0.7, size.height * 0.12),
-          radius: size.width * 0.55,
-        ),
-      );
+      ..shader =
+          RadialGradient(
+            colors: [Colors.white.withValues(alpha: 0.4), Colors.transparent],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.7, size.height * 0.12),
+              radius: size.width * 0.55,
+            ),
+          );
     canvas.drawRect(Offset.zero & size, topGlow);
   }
 
@@ -650,10 +643,7 @@ class _TravelScenePainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          const Color(0xFFEAF8EE),
-          const Color(0xFFD6F2E0),
-        ],
+        colors: [const Color(0xFFEAF8EE), const Color(0xFFD6F2E0)],
       ).createShader(skyRect);
     canvas.drawRect(skyRect, sky);
 
@@ -687,10 +677,7 @@ class _TravelScenePainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(
-      mountainFar,
-      Paint()..color = const Color(0xFFB8E2C4),
-    );
+    canvas.drawPath(mountainFar, Paint()..color = const Color(0xFFB8E2C4));
 
     final mountainMid = Path()
       ..moveTo(0, size.height * 0.71)
@@ -709,10 +696,7 @@ class _TravelScenePainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(
-      mountainMid,
-      Paint()..color = const Color(0xFF84CBA1),
-    );
+    canvas.drawPath(mountainMid, Paint()..color = const Color(0xFF84CBA1));
 
     final mountainFront = Path()
       ..moveTo(0, size.height * 0.82)
@@ -731,10 +715,7 @@ class _TravelScenePainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(
-      mountainFront,
-      Paint()..color = const Color(0xFF489467),
-    );
+    canvas.drawPath(mountainFront, Paint()..color = const Color(0xFF489467));
 
     final foregroundHill = Path()
       ..moveTo(0, size.height * 0.9)
@@ -753,10 +734,7 @@ class _TravelScenePainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(
-      foregroundHill,
-      Paint()..color = const Color(0xFF1E6B4C),
-    );
+    canvas.drawPath(foregroundHill, Paint()..color = const Color(0xFF1E6B4C));
 
     final cx = size.width * 0.54;
     final bodyTop = size.height * 0.64;
@@ -930,32 +908,1417 @@ class _GetStartedButtonState extends State<_GetStartedButton> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final FocusNode _searchFocusNode = FocusNode();
+  static const String _profileImageUrl =
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330'
+      '?auto=format&fit=crop&w=400&q=80';
+  final List<String> _exploreTabs = const [
+    'All',
+    'Popular',
+    'Recommended',
+    'Most Viewed',
+  ];
+  final List<_Destination> _destinations = const [
+    _Destination(
+      name: 'Ubud Rice Terrace',
+      country: 'Indonesia',
+      rating: 4.9,
+      imageUrl:
+          'https://images.unsplash.com/photo-1537996194471-e657df975ab4'
+          '?auto=format&fit=crop&w=1200&q=80',
+      tripLength: '5 days',
+      priceLabel: '\$920',
+      description:
+          'Lush rice terraces, sunrise yoga and hidden waterfalls across a calm tropical route.',
+    ),
+    _Destination(
+      name: 'Passo Rolle, TN',
+      country: 'Italy',
+      rating: 4.8,
+      imageUrl:
+          'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b'
+          '?auto=format&fit=crop&w=1200&q=80',
+      tripLength: '4 days',
+      priceLabel: '\$760',
+      description:
+          'A panoramic alpine escape with mountain roads, cable cars and dramatic golden-hour views.',
+    ),
+    _Destination(
+      name: 'Chefchaouen Medina',
+      country: 'Morocco',
+      rating: 4.7,
+      imageUrl:
+          'https://images.unsplash.com/photo-1528127269322-539801943592'
+          '?auto=format&fit=crop&w=1200&q=80',
+      tripLength: '3 days',
+      priceLabel: '\$430',
+      description:
+          'Blue-painted streets, artisan shops and rooftop cafés that overlook the Rif mountains.',
+    ),
+    _Destination(
+      name: 'Santorini Sunset',
+      country: 'Greece',
+      rating: 4.8,
+      imageUrl:
+          'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff'
+          '?auto=format&fit=crop&w=1200&q=80',
+      tripLength: '6 days',
+      priceLabel: '\$1,150',
+      description:
+          'White cliffside villages, caldera cruises and sunset dinners in Oia and Fira.',
+    ),
+  ];
+  final List<_Category> _categories = const [
+    _Category(
+      label: 'Mountains',
+      imageUrl:
+          'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b'
+          '?auto=format&fit=crop&w=600&q=80',
+      alignment: Alignment.topCenter,
+    ),
+    _Category(
+      label: 'Camp',
+      imageUrl:
+          'https://images.unsplash.com/photo-1504280390368-3971d7d1fcae'
+          '?auto=format&fit=crop&w=600&q=80',
+      alignment: Alignment.center,
+    ),
+    _Category(
+      label: 'Beach',
+      imageUrl:
+          'https://images.unsplash.com/photo-1507525428034-b723cf961d3e'
+          '?auto=format&fit=crop&w=600&q=80',
+      alignment: Alignment.bottomCenter,
+    ),
+    _Category(
+      label: 'City',
+      imageUrl:
+          'https://images.unsplash.com/photo-1449824913935-59a10b8d2000'
+          '?auto=format&fit=crop&w=600&q=80',
+      alignment: Alignment.centerRight,
+    ),
+  ];
+  final List<_TripPlan> _tripPlans = const [
+    _TripPlan(
+      title: 'Weekend Escape',
+      location: 'Marrakesh to Agafay',
+      days: '2D / 1N',
+      budgetLabel: '\$280',
+      imageUrl:
+          'https://images.unsplash.com/photo-1539650116574-75c0c6d73f4e'
+          '?auto=format&fit=crop&w=1000&q=80',
+    ),
+    _TripPlan(
+      title: 'Work + Chill',
+      location: 'Lisbon Coastline',
+      days: '4D / 3N',
+      budgetLabel: '\$540',
+      imageUrl:
+          'https://images.unsplash.com/photo-1513735492246-483525079686'
+          '?auto=format&fit=crop&w=1000&q=80',
+    ),
+    _TripPlan(
+      title: 'Nature Focus',
+      location: 'Swiss Alps',
+      days: '5D / 4N',
+      budgetLabel: '\$990',
+      imageUrl:
+          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4'
+          '?auto=format&fit=crop&w=1000&q=80',
+    ),
+  ];
+  final List<_TravelTip> _travelTips = const [
+    _TravelTip(
+      title: 'Best sunrise viewpoints',
+      subtitle: 'Find spots with fewer crowds and cleaner weather windows.',
+      readTime: '5 min read',
+      imageUrl:
+          'https://images.unsplash.com/photo-1470770841072-f978cf4d019e'
+          '?auto=format&fit=crop&w=800&q=80',
+    ),
+    _TravelTip(
+      title: 'Pack light for spring trips',
+      subtitle: 'A 7-piece packing system for mixed weather and city walks.',
+      readTime: '4 min read',
+      imageUrl:
+          'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800'
+          '?auto=format&fit=crop&w=800&q=80',
+    ),
+  ];
+
+  int _activeTabIndex = 1;
+  int _activeNavIndex = 0;
+  String _activeCategory = 'Camp';
+  bool _isSearchFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFocusNode.addListener(_handleSearchFocus);
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode
+      ..removeListener(_handleSearchFocus)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _handleSearchFocus() {
+    if (_isSearchFocused != _searchFocusNode.hasFocus) {
+      setState(() => _isSearchFocused = _searchFocusNode.hasFocus);
+    }
+  }
+
+  void _openDetails(_Destination destination) {
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 340),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return _DestinationDetailsScreen(destination: destination);
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.03),
+                end: Offset.zero,
+              ).animate(curved),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildExploreContent() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hi Williamson,',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xCC111111),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: _TravelNetworkImage(
+                      imageUrl: _profileImageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: 290,
+              child: Text(
+                'Where do you want to go?',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF111111),
+                  fontSize: 31,
+                  fontWeight: FontWeight.w800,
+                  height: 1.05,
+                ),
+              ),
+            ),
+            const SizedBox(height: 26),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 320),
+              curve: Curves.easeInOut,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: _isSearchFocused
+                      ? const Color(0xFF22B07D).withValues(alpha: 0.6)
+                      : Colors.transparent,
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(
+                      alpha: _isSearchFocused ? 0.11 : 0.06,
+                    ),
+                    blurRadius: _isSearchFocused ? 16 : 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 14),
+                  const Icon(
+                    Icons.search_rounded,
+                    color: Color(0xFF8A8A8A),
+                    size: 21,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      focusNode: _searchFocusNode,
+                      cursorColor: const Color(0xFF22B07D),
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Discover a city',
+                        hintStyle: GoogleFonts.inter(
+                          color: const Color(0xFF8A8A8A),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        isCollapsed: true,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    splashRadius: 20,
+                    icon: const Icon(
+                      Icons.tune_rounded,
+                      color: Color(0xFF8A8A8A),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 26),
+            _SectionHeader(title: 'Featured Journey', onSeeAll: () {}),
+            const SizedBox(height: 14),
+            _FeaturedDealCard(
+              destination: _destinations.first,
+              onTap: () => _openDetails(_destinations.first),
+            ),
+            const SizedBox(height: 30),
+            _SectionHeader(title: 'Explore Cities', onSeeAll: () {}),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 42,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _exploreTabs.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
+                itemBuilder: (context, index) {
+                  final active = _activeTabIndex == index;
+                  return GestureDetector(
+                    onTap: () => setState(() => _activeTabIndex = index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 320),
+                      curve: Curves.easeInOut,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? const Color(0xFF22B07D).withValues(alpha: 0.15)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: active
+                              ? const Color(0xFF22B07D).withValues(alpha: 0.45)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Text(
+                        _exploreTabs[index],
+                        style: GoogleFonts.inter(
+                          color: active
+                              ? const Color(0xFF22B07D)
+                              : const Color(0xFF9A9A9A),
+                          fontSize: 14,
+                          fontWeight: active
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 214,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _destinations.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 16),
+                itemBuilder: (context, index) {
+                  final destination = _destinations[index];
+                  return _DestinationCard(
+                    destination: destination,
+                    onTap: () => _openDetails(destination),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+            _SectionHeader(title: 'Trip Plans', onSeeAll: () {}),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 194,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _tripPlans.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 14),
+                itemBuilder: (context, index) {
+                  final plan = _tripPlans[index];
+                  return _TripPlanCard(plan: plan);
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+            _SectionHeader(title: 'Categories', onSeeAll: () {}),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 106,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _categories.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 16),
+                itemBuilder: (context, index) {
+                  final category = _categories[index];
+                  final active = _activeCategory == category.label;
+                  return _CategoryCard(
+                    category: category,
+                    active: active,
+                    onTap: () {
+                      setState(() => _activeCategory = category.label);
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+            _SectionHeader(title: 'Travel Tips', onSeeAll: () {}),
+            const SizedBox(height: 14),
+            Column(
+              children: List<Widget>.generate(_travelTips.length, (index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == _travelTips.length - 1 ? 0 : 12,
+                  ),
+                  child: _TravelTipCard(tip: _travelTips[index]),
+                );
+              }),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBodyForTab() {
+    if (_activeNavIndex == 0) {
+      return _buildExploreContent();
+    }
+    const icons = [
+      Icons.home_rounded,
+      Icons.travel_explore_rounded,
+      Icons.grid_view_rounded,
+      Icons.favorite_border_rounded,
+      Icons.person_outline_rounded,
+    ];
+    const labels = ['Home', 'Explore', 'Grid', 'Favorites', 'Profile'];
+    return _NavPlaceholder(
+      icon: icons[_activeNavIndex],
+      label: labels[_activeNavIndex],
+    );
+  }
+
+  Widget _buildBottomNav() {
+    const navItems = [
+      Icons.home_rounded,
+      Icons.travel_explore_rounded,
+      Icons.grid_view_rounded,
+      Icons.favorite_border_rounded,
+      Icons.person_outline_rounded,
+    ];
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 12),
+        child: Container(
+          height: 66,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, -1),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List<Widget>.generate(navItems.length, (index) {
+              final active = _activeNavIndex == index;
+              return Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(22),
+                  onTap: () => setState(() => _activeNavIndex = index),
+                  child: Center(
+                    child: AnimatedScale(
+                      scale: active ? 1.05 : 1.0,
+                      duration: const Duration(milliseconds: 320),
+                      curve: Curves.easeInOut,
+                      child: Icon(
+                        navItems[index],
+                        color: active
+                            ? const Color(0xFF22B07D)
+                            : const Color(0xFFA8A8A8),
+                        size: 23,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F3D3E), Color(0xFF1D7D63)],
-          ),
-        ),
+      backgroundColor: const Color(0xFFF4F6F6),
+      body: SafeArea(
+        bottom: false,
         child: Center(
-          child: Text(
-            'Safr Home',
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 30,
-              letterSpacing: 0.4,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 390),
+            child: Column(
+              children: [
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 360),
+                    switchInCurve: Curves.easeInOut,
+                    switchOutCurve: Curves.easeInOut,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0.02, 0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: KeyedSubtree(
+                      key: ValueKey<int>(_activeNavIndex),
+                      child: _buildBodyForTab(),
+                    ),
+                  ),
+                ),
+                _buildBottomNav(),
+              ],
             ),
           ),
         ),
       ),
     );
   }
+}
+
+class _FeaturedDealCard extends StatelessWidget {
+  const _FeaturedDealCard({required this.destination, required this.onTap});
+
+  final _Destination destination;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 188,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.14),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _TravelNetworkImage(
+                imageUrl: destination.imageUrl,
+                fit: BoxFit.cover,
+              ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.15),
+                      Colors.black.withValues(alpha: 0.65),
+                    ],
+                    stops: const [0.2, 1],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            destination.name,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          destination.priceLabel,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          destination.country,
+                          style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Icon(
+                          Icons.schedule_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          destination.tripLength,
+                          style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TripPlanCard extends StatelessWidget {
+  const _TripPlanCard({required this.plan});
+
+  final _TripPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 208,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.09),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: SizedBox(
+              height: 104,
+              width: double.infinity,
+              child: _TravelNetworkImage(
+                imageUrl: plan.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  plan.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF111111),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  plan.location,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF7D7D7D),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month_rounded,
+                      size: 14,
+                      color: Color(0xFF22B07D),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      plan.days,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF22B07D),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      plan.budgetLabel,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TravelTipCard extends StatelessWidget {
+  const _TravelTipCard({required this.tip});
+
+  final _TravelTip tip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 84,
+              height: 84,
+              child: _TravelNetworkImage(
+                imageUrl: tip.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tip.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF111111),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  tip.subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6F6F6F),
+                    fontSize: 12,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  tip.readTime,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF22B07D),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailChip extends StatelessWidget {
+  const _DetailChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFF22B07D).withValues(alpha: 0.22),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: const Color(0xFF22B07D)),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF1B3E35),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TravelNetworkImage extends StatelessWidget {
+  const _TravelNetworkImage({
+    required this.imageUrl,
+    this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
+  });
+
+  final String imageUrl;
+  final BoxFit fit;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.network(
+      imageUrl,
+      fit: fit,
+      alignment: alignment,
+      filterQuality: FilterQuality.medium,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+        return Container(
+          color: const Color(0xFFE9EFEC),
+          child: const Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Color(0xFF22B07D),
+              ),
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: const Color(0xFFE9EFEC),
+          child: const Center(
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              color: Color(0xFF8FA59D),
+              size: 28,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.onSeeAll});
+
+  final String title;
+  final VoidCallback onSeeAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF111111),
+            fontSize: 21,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const Spacer(),
+        InkWell(
+          onTap: onSeeAll,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Text(
+              'See all >',
+              style: GoogleFonts.inter(
+                color: const Color(0xFF22B07D),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DestinationCard extends StatelessWidget {
+  const _DestinationCard({required this.destination, required this.onTap});
+
+  final _Destination destination;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 172,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.11),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _TravelNetworkImage(
+                imageUrl: destination.imageUrl,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.64),
+                    ],
+                    stops: const [0.45, 1],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 12,
+                right: 12,
+                bottom: 12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      destination.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          destination.country,
+                          style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.star_rounded,
+                          color: Color(0xFFFFD55A),
+                          size: 14,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          destination.rating.toStringAsFixed(1),
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          destination.priceLabel,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryCard extends StatelessWidget {
+  const _CategoryCard({
+    required this.category,
+    required this.active,
+    required this.onTap,
+  });
+
+  final _Category category;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeInOut,
+        width: 84,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: active
+                ? const Color(0xFF22B07D).withValues(alpha: 0.45)
+                : Colors.transparent,
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: active ? 0.12 : 0.06),
+              blurRadius: active ? 14 : 8,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: SizedBox(
+                height: 66,
+                width: double.infinity,
+                child: _TravelNetworkImage(
+                  imageUrl: category.imageUrl,
+                  fit: BoxFit.cover,
+                  alignment: category.alignment,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  category.label,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF111111),
+                    fontSize: 13,
+                    fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavPlaceholder extends StatelessWidget {
+  const _NavPlaceholder({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 52, color: const Color(0xFF22B07D)),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF111111),
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DestinationDetailsScreen extends StatelessWidget {
+  const _DestinationDetailsScreen({required this.destination});
+
+  final _Destination destination;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6F6),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _TravelNetworkImage(
+                          imageUrl: destination.imageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.45),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 14,
+                          top: 14,
+                          child: Material(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(16),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () => Navigator.of(context).pop(),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Icon(Icons.arrow_back_rounded),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  destination.name,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF111111),
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    height: 1.05,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_rounded,
+                      size: 18,
+                      color: Color(0xFF22B07D),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      destination.country,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF8A8A8A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(
+                      Icons.star_rounded,
+                      size: 18,
+                      color: Color(0xFFFFCF4A),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      destination.rating.toStringAsFixed(1),
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _DetailChip(
+                      icon: Icons.schedule_rounded,
+                      label: destination.tripLength,
+                    ),
+                    _DetailChip(
+                      icon: Icons.payments_outlined,
+                      label: 'From ${destination.priceLabel}',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  destination.description,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF555555),
+                    fontSize: 15,
+                    height: 1.55,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Destination {
+  const _Destination({
+    required this.name,
+    required this.country,
+    required this.rating,
+    required this.imageUrl,
+    required this.tripLength,
+    required this.priceLabel,
+    required this.description,
+  });
+
+  final String name;
+  final String country;
+  final double rating;
+  final String imageUrl;
+  final String tripLength;
+  final String priceLabel;
+  final String description;
+}
+
+class _Category {
+  const _Category({
+    required this.label,
+    required this.imageUrl,
+    required this.alignment,
+  });
+
+  final String label;
+  final String imageUrl;
+  final Alignment alignment;
+}
+
+class _TripPlan {
+  const _TripPlan({
+    required this.title,
+    required this.location,
+    required this.days,
+    required this.budgetLabel,
+    required this.imageUrl,
+  });
+
+  final String title;
+  final String location;
+  final String days;
+  final String budgetLabel;
+  final String imageUrl;
+}
+
+class _TravelTip {
+  const _TravelTip({
+    required this.title,
+    required this.subtitle,
+    required this.readTime,
+    required this.imageUrl,
+  });
+
+  final String title;
+  final String subtitle;
+  final String readTime;
+  final String imageUrl;
 }

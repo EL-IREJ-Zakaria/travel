@@ -16,7 +16,19 @@ Future<void> main() async {
   stdout.writeln("Travell backend running on http://localhost:$port");
 
   await for (final request in server) {
+    _safeHandleRequest(request);
+  }
+}
+
+void _safeHandleRequest(HttpRequest request) {
+  try {
     _handleRequest(request);
+  } catch (_) {
+    _sendJson(
+      request.response,
+      HttpStatus.internalServerError,
+      {"success": false, "message": "Internal server error"},
+    );
   }
 }
 
@@ -48,6 +60,9 @@ void _handleRequest(HttpRequest request) {
       "endpoints": [
         "GET /api/health",
         "GET /api/home",
+        "GET /api/home/user",
+        "GET /api/home/search",
+        "GET /api/home/featured-journey",
         "GET /api/home/destinations?tab=all|popular|recommended|mostviewed",
         "GET /api/home/categories",
         "GET /api/home/trip-plans",
@@ -75,10 +90,60 @@ void _handleRequest(HttpRequest request) {
     return;
   }
 
+  if (path == "/api/home/user") {
+    _sendJson(request.response, HttpStatus.ok, {
+      "success": true,
+      "data": homeData["user"],
+    });
+    return;
+  }
+
+  if (path == "/api/home/search") {
+    _sendJson(request.response, HttpStatus.ok, {
+      "success": true,
+      "data": homeData["search"],
+    });
+    return;
+  }
+
+  if (path == "/api/home/featured-journey") {
+    final sections = homeData["sections"] as Map<String, dynamic>;
+    _sendJson(request.response, HttpStatus.ok, {
+      "success": true,
+      "data": sections["featuredJourney"],
+    });
+    return;
+  }
+
   if (path == "/api/home/destinations") {
     final tab =
         (request.uri.queryParameters["tab"] ?? "all").trim().toLowerCase();
-    final data = _destinationsByTab(tab);
+    final limitParam = request.uri.queryParameters["limit"];
+    final minRatingParam = request.uri.queryParameters["minRating"];
+    final limit = _parsePositiveInt(limitParam);
+    final minRating = _parseNonNegativeDouble(minRatingParam);
+
+    if (limitParam != null && limit == null) {
+      _sendJson(request.response, HttpStatus.badRequest, {
+        "success": false,
+        "message": "Invalid limit. It must be a positive integer.",
+      });
+      return;
+    }
+
+    if (minRatingParam != null && minRating == null) {
+      _sendJson(request.response, HttpStatus.badRequest, {
+        "success": false,
+        "message": "Invalid minRating. It must be a number >= 0.",
+      });
+      return;
+    }
+
+    final data = _destinationsByTab(
+      tab: tab,
+      limit: limit,
+      minRating: minRating,
+    );
 
     if (data == null) {
       _sendJson(request.response, HttpStatus.badRequest, {
@@ -92,6 +157,10 @@ void _handleRequest(HttpRequest request) {
     _sendJson(request.response, HttpStatus.ok, {
       "success": true,
       "tab": tab,
+      "filters": {
+        "limit": limit,
+        "minRating": minRating,
+      },
       "count": data.length,
       "data": data,
     });
@@ -156,19 +225,36 @@ Map<String, dynamic> _homePayload() {
   };
 }
 
-List<Map<String, dynamic>>? _destinationsByTab(String tab) {
+List<Map<String, dynamic>>? _destinationsByTab({
+  required String tab,
+  int? limit,
+  double? minRating,
+}) {
   final sections = homeData["sections"] as Map<String, dynamic>;
   final destinations = sections["destinations"] as List<dynamic>;
 
-  if (tab == "all") return _cleanDestinations(destinations);
+  List<dynamic> filtered = destinations;
 
-  final tag = _tabToTag[tab];
-  if (tag == null) return null;
+  if (tab != "all") {
+    final tag = _tabToTag[tab];
+    if (tag == null) return null;
 
-  final filtered = destinations
-      .where((item) => (item as Map<String, dynamic>)["tags"].contains(tag))
-      .toList();
-  return _cleanDestinations(filtered);
+    filtered = filtered
+        .where((item) => (item as Map<String, dynamic>)["tags"].contains(tag))
+        .toList();
+  }
+
+  if (minRating != null) {
+    filtered = filtered.where((item) {
+      final rating = (item as Map<String, dynamic>)["rating"];
+      if (rating is num) return rating.toDouble() >= minRating;
+      return false;
+    }).toList();
+  }
+
+  final cleaned = _cleanDestinations(filtered);
+  if (limit == null || limit >= cleaned.length) return cleaned;
+  return cleaned.sublist(0, limit);
 }
 
 List<Map<String, dynamic>> _cleanDestinations(List<dynamic> destinations) {
@@ -192,4 +278,18 @@ void _sendJson(HttpResponse response, int statusCode, Object payload) {
     ..statusCode = statusCode
     ..write(jsonEncode(payload))
     ..close();
+}
+
+int? _parsePositiveInt(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  final parsed = int.tryParse(value);
+  if (parsed == null || parsed <= 0) return null;
+  return parsed;
+}
+
+double? _parseNonNegativeDouble(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  final parsed = double.tryParse(value);
+  if (parsed == null || parsed < 0) return null;
+  return parsed;
 }

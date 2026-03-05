@@ -9,6 +9,46 @@ void main() {
   runApp(const SafrApp());
 }
 
+const List<IconData> _kMainNavIcons = <IconData>[
+  Icons.home_rounded,
+  Icons.travel_explore_rounded,
+  Icons.menu_book_rounded,
+  Icons.favorite_border_rounded,
+  Icons.person_outline_rounded,
+];
+
+const List<String> _kMainNavLabels = <String>[
+  'Home',
+  'Explore',
+  'Trips',
+  'Favorites',
+  'Profile',
+];
+
+Route<void> _buildSmartRoute(Widget page) {
+  return PageRouteBuilder<void>(
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeInOut,
+      );
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.04),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 class SafrApp extends StatelessWidget {
   const SafrApp({super.key});
 
@@ -1106,6 +1146,91 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openAccountDetails() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        const _AccountOptionDetailsScreen(
+          title: 'Account Details',
+          subtitle: 'Manage your profile information and personal details.',
+          icon: Icons.person_outline_rounded,
+        ),
+      ),
+    );
+  }
+
+  void _openNotificationSettings() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        const _AccountOptionDetailsScreen(
+          title: 'Notification Settings',
+          subtitle: 'Choose which alerts and updates you want to receive.',
+          icon: Icons.notifications_none_rounded,
+        ),
+      ),
+    );
+  }
+
+  void _openPaymentMethods() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        const _AccountOptionDetailsScreen(
+          title: 'Payment Methods',
+          subtitle: 'Manage your cards, billing profiles, and payment options.',
+          icon: Icons.credit_card_rounded,
+        ),
+      ),
+    );
+  }
+
+  void _openPreferencesDetails() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        const _AccountOptionDetailsScreen(
+          title: 'Preferences',
+          subtitle: 'Control language, appearance, and app behavior.',
+          icon: Icons.settings_rounded,
+        ),
+      ),
+    );
+  }
+
+  void _openHelpSupport() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        const _AccountOptionDetailsScreen(
+          title: 'Help & Support',
+          subtitle: 'Get help, browse FAQs, and contact support.',
+          icon: Icons.help_outline_rounded,
+        ),
+      ),
+    );
+  }
+
+  void _openSettingsPage() {
+    Navigator.of(context).push(
+      _buildSmartRoute(
+        _SettingsScreen(
+          onNotificationsTap: _openNotificationSettings,
+          onPaymentTap: _openPaymentMethods,
+          onPreferencesTap: _openPreferencesDetails,
+          onHelpTap: _openHelpSupport,
+          onBottomNavTap: _handleNestedNavTap,
+        ),
+      ),
+    );
+  }
+
+  void _handleNestedNavTap(int index) {
+    if (index == 4) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    if (!mounted) return;
+    setState(() => _activeNavIndex = index);
+  }
+
   Widget _buildExploreContent() {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -1358,73 +1483,25 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_activeNavIndex == 0) {
       return _buildExploreContent();
     }
-    const icons = [
-      Icons.home_rounded,
-      Icons.travel_explore_rounded,
-      Icons.grid_view_rounded,
-      Icons.favorite_border_rounded,
-      Icons.person_outline_rounded,
-    ];
-    const labels = ['Home', 'Explore', 'Grid', 'Favorites', 'Profile'];
+    if (_activeNavIndex == 4) {
+      return _ProfileOverviewScreen(
+        onAccountSettingsTap: _openAccountDetails,
+        onNotificationsTap: _openNotificationSettings,
+        onPaymentTap: _openPaymentMethods,
+        onPreferencesTap: _openSettingsPage,
+      );
+    }
+
     return _NavPlaceholder(
-      icon: icons[_activeNavIndex],
-      label: labels[_activeNavIndex],
+      icon: _kMainNavIcons[_activeNavIndex],
+      label: _kMainNavLabels[_activeNavIndex],
     );
   }
 
   Widget _buildBottomNav() {
-    const navItems = [
-      Icons.home_rounded,
-      Icons.travel_explore_rounded,
-      Icons.grid_view_rounded,
-      Icons.favorite_border_rounded,
-      Icons.person_outline_rounded,
-    ];
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 10, 24, 12),
-        child: Container(
-          height: 66,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, -1),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List<Widget>.generate(navItems.length, (index) {
-              final active = _activeNavIndex == index;
-              return Expanded(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(22),
-                  onTap: () => setState(() => _activeNavIndex = index),
-                  child: Center(
-                    child: AnimatedScale(
-                      scale: active ? 1.05 : 1.0,
-                      duration: const Duration(milliseconds: 320),
-                      curve: Curves.easeInOut,
-                      child: Icon(
-                        navItems[index],
-                        color: active
-                            ? const Color(0xFF22B07D)
-                            : const Color(0xFFA8A8A8),
-                        size: 23,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-      ),
+    return _FloatingBottomNavBar(
+      activeIndex: _activeNavIndex,
+      onTap: (index) => setState(() => _activeNavIndex = index),
     );
   }
 
@@ -1465,6 +1542,754 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildBottomNav(),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FloatingBottomNavBar extends StatelessWidget {
+  const _FloatingBottomNavBar({required this.activeIndex, required this.onTap});
+
+  final int activeIndex;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 12),
+        child: Container(
+          height: 66,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, -1),
+              ),
+            ],
+          ),
+          child: Row(
+            children: List<Widget>.generate(_kMainNavIcons.length, (index) {
+              final active = activeIndex == index;
+              return Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(22),
+                  onTap: () => onTap(index),
+                  child: Center(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: active
+                            ? const Color(0xFF2FAF7A).withValues(alpha: 0.14)
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: active
+                              ? const Color(0xFF2FAF7A).withValues(alpha: 0.6)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Icon(
+                        _kMainNavIcons[index],
+                        color: active
+                            ? const Color(0xFF2FAF7A)
+                            : const Color(0xFFA8A8A8),
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileOverviewScreen extends StatelessWidget {
+  const _ProfileOverviewScreen({
+    required this.onAccountSettingsTap,
+    required this.onNotificationsTap,
+    required this.onPaymentTap,
+    required this.onPreferencesTap,
+  });
+
+  final VoidCallback onAccountSettingsTap;
+  final VoidCallback onNotificationsTap;
+  final VoidCallback onPaymentTap;
+  final VoidCallback onPreferencesTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(24, 40, 24, 88),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF2FAF7A), Color(0xFF35C48B)],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(28),
+                    bottomRight: Radius.circular(28),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Profile',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Manage your account',
+                      style: GoogleFonts.inter(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Positioned(
+                left: 14,
+                right: 14,
+                bottom: -142,
+                child: _ProfileUserCard(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 158),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Column(
+              children: [
+                _AccountListTileCard(
+                  icon: Icons.person_outline_rounded,
+                  title: 'Account Settings',
+                  subtitle: 'Manage your account details',
+                  onTap: onAccountSettingsTap,
+                ),
+                const SizedBox(height: 16),
+                _AccountListTileCard(
+                  icon: Icons.notifications_none_rounded,
+                  title: 'Notifications',
+                  subtitle: 'Manage notification preferences',
+                  onTap: onNotificationsTap,
+                ),
+                const SizedBox(height: 16),
+                _AccountListTileCard(
+                  icon: Icons.credit_card_rounded,
+                  title: 'Payment Methods',
+                  subtitle: 'Manage cards and payment',
+                  onTap: onPaymentTap,
+                ),
+                const SizedBox(height: 16),
+                _AccountListTileCard(
+                  icon: Icons.settings_rounded,
+                  title: 'Preferences',
+                  subtitle: 'App settings and preferences',
+                  onTap: onPreferencesTap,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileUserCard extends StatelessWidget {
+  const _ProfileUserCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.11),
+            blurRadius: 22,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF2FAF7A),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'W',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFF35C48B),
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.photo_camera_outlined,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Williamson',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    _ProfileInfoLine(
+                      icon: Icons.mail_outline_rounded,
+                      text: 'williamson@safr.com',
+                    ),
+                    const SizedBox(height: 3),
+                    _ProfileInfoLine(
+                      icon: Icons.phone_outlined,
+                      text: '+1 (555) 123-4567',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Divider(
+            color: const Color(0xFF111111).withValues(alpha: 0.1),
+            height: 1,
+          ),
+          const SizedBox(height: 16),
+          const Row(
+            children: [
+              Expanded(
+                child: _ProfileStatItem(value: '12', label: 'Trips'),
+              ),
+              Expanded(
+                child: _ProfileStatItem(value: '28', label: 'Reviews'),
+              ),
+              Expanded(
+                child: _ProfileStatItem(value: '156', label: 'Photos'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileInfoLine extends StatelessWidget {
+  const _ProfileInfoLine({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: const Color(0xFF7A7A7A)),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF7A7A7A),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileStatItem extends StatelessWidget {
+  const _ProfileStatItem({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF111111),
+            fontSize: 23,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF7A7A7A),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AccountListTileCard extends StatelessWidget {
+  const _AccountListTileCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    this.iconColor = const Color(0xFF2FAF7A),
+    this.titleColor = const Color(0xFF111111),
+    this.subtitleColor = const Color(0xFF7A7A7A),
+    this.iconBackgroundColor = const Color(0xFFE9F4EE),
+    this.backgroundColor = Colors.white,
+    this.borderColor = Colors.transparent,
+    this.trailingColor = const Color(0xFF8A8A8A),
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  final Color iconColor;
+  final Color titleColor;
+  final Color subtitleColor;
+  final Color iconBackgroundColor;
+  final Color backgroundColor;
+  final Color borderColor;
+  final Color trailingColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: borderColor),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconBackgroundColor,
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        color: titleColor,
+                        fontSize: 22 / 1.375,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.inter(
+                        color: subtitleColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.chevron_right_rounded, color: trailingColor, size: 22),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsScreen extends StatelessWidget {
+  const _SettingsScreen({
+    required this.onNotificationsTap,
+    required this.onPaymentTap,
+    required this.onPreferencesTap,
+    required this.onHelpTap,
+    required this.onBottomNavTap,
+  });
+
+  final VoidCallback onNotificationsTap;
+  final VoidCallback onPaymentTap;
+  final VoidCallback onPreferencesTap;
+  final VoidCallback onHelpTap;
+  final ValueChanged<int> onBottomNavTap;
+
+  Future<void> _showLogoutConfirmation(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Logout',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF111111),
+              fontSize: 21,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to sign out from your account?',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF575757),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF7A7A7A),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: const Color(0xFF111111),
+                    content: Text(
+                      'You have been logged out.',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                'Logout',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFE25A5A),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6F6),
+      body: SafeArea(
+        bottom: false,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 390),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(14, 18, 14, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Material(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(14),
+                                onTap: () => Navigator.of(context).pop(),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Icon(
+                                    Icons.arrow_back_rounded,
+                                    color: Color(0xFF111111),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Settings',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF111111),
+                                fontSize: 30,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 22),
+                        _AccountListTileCard(
+                          icon: Icons.notifications_none_rounded,
+                          title: 'Notifications',
+                          subtitle: 'Manage notification preferences',
+                          onTap: onNotificationsTap,
+                        ),
+                        const SizedBox(height: 14),
+                        _AccountListTileCard(
+                          icon: Icons.credit_card_rounded,
+                          title: 'Payment Methods',
+                          subtitle: 'Manage cards and payment',
+                          onTap: onPaymentTap,
+                        ),
+                        const SizedBox(height: 14),
+                        _AccountListTileCard(
+                          icon: Icons.settings_rounded,
+                          title: 'Preferences',
+                          subtitle: 'App settings and preferences',
+                          onTap: onPreferencesTap,
+                        ),
+                        const SizedBox(height: 14),
+                        _AccountListTileCard(
+                          icon: Icons.help_outline_rounded,
+                          title: 'Help & Support',
+                          subtitle: 'Get help and contact support',
+                          onTap: onHelpTap,
+                        ),
+                        const SizedBox(height: 14),
+                        _AccountListTileCard(
+                          icon: Icons.logout_rounded,
+                          title: 'Logout',
+                          subtitle: 'Sign out from your account',
+                          onTap: () => _showLogoutConfirmation(context),
+                          iconColor: const Color(0xFFE25A5A),
+                          titleColor: const Color(0xFFE25A5A),
+                          subtitleColor: const Color(0xFFBC6C6C),
+                          iconBackgroundColor: const Color(0xFFFFEBEB),
+                          backgroundColor: const Color(0xFFFFF7F7),
+                          borderColor: const Color(0xFFFFC6C6),
+                          trailingColor: const Color(0xFFE25A5A),
+                        ),
+                        const SizedBox(height: 26),
+                        Center(
+                          child: Text(
+                            'Safr App v1.0.0',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF8A8A8A),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                _FloatingBottomNavBar(activeIndex: 4, onTap: onBottomNavTap),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountOptionDetailsScreen extends StatelessWidget {
+  const _AccountOptionDetailsScreen({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6F6),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(Icons.arrow_back_rounded),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFE9F4EE),
+                      ),
+                      child: Icon(icon, color: const Color(0xFF2FAF7A)),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF111111),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF7A7A7A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -1960,36 +2785,46 @@ class _DestinationCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.location_on_rounded,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          destination.country,
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_rounded,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 2),
+                              Flexible(
+                                child: Text(
+                                  destination.country,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              const Icon(
+                                Icons.star_rounded,
+                                color: Color(0xFFFFD55A),
+                                size: 14,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                destination.rating.toStringAsFixed(1),
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.star_rounded,
-                          color: Color(0xFFFFD55A),
-                          size: 14,
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          destination.rating.toStringAsFixed(1),
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const Spacer(),
+                        const SizedBox(width: 6),
                         Text(
                           destination.priceLabel,
                           style: GoogleFonts.inter(

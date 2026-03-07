@@ -1594,94 +1594,321 @@ class _ProfileOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const Color cardBorder = Color(0xFFE1EBE5);
+    const Color actionTitle = Color(0xFF13201A);
+    const Color actionSubtitle = Color(0xFF64766D);
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(24, 40, 24, 88),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFF2FAF7A), Color(0xFF35C48B)],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(28),
-                    bottomRight: Radius.circular(28),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Profile',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Manage your account',
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Positioned(
-                left: 14,
-                right: 14,
-                bottom: -142,
-                child: _ProfileUserCard(),
-              ),
-            ],
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFF7FCFA), Color(0xFFF4F6F6)],
           ),
-          const SizedBox(height: 158),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Column(
+        ),
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
               children: [
-                _AccountListTileCard(
-                  icon: Icons.person_outline_rounded,
-                  title: 'Account Settings',
-                  subtitle: 'Manage your account details',
-                  onTap: onAccountSettingsTap,
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+                  padding: const EdgeInsets.fromLTRB(22, 22, 22, 112),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF0D5B50), Color(0xFF26A970)],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF0D5B50).withValues(alpha: 0.26),
+                        blurRadius: 26,
+                        offset: const Offset(0, 14),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        right: -52,
+                        top: -46,
+                        child: Container(
+                          width: 170,
+                          height: 170,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 34,
+                        bottom: -30,
+                        child: Container(
+                          width: 82,
+                          height: 82,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.07),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 7,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.16),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.22),
+                              ),
+                            ),
+                            child: Text(
+                              'Traveler dashboard',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Profile',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 34,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Manage account, security and travel preferences',
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.84),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 1.35,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          const Row(
+                            children: [
+                              Expanded(
+                                child: _ProfileHeaderMetric(
+                                  label: 'Member since',
+                                  value: '2021',
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: _ProfileHeaderMetric(
+                                  label: 'Plan',
+                                  value: 'Premium',
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: _ProfileHeaderMetric(
+                                  label: 'Completion',
+                                  value: '92%',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _AccountListTileCard(
-                  icon: Icons.notifications_none_rounded,
-                  title: 'Notifications',
-                  subtitle: 'Manage notification preferences',
-                  onTap: onNotificationsTap,
-                ),
-                const SizedBox(height: 16),
-                _AccountListTileCard(
-                  icon: Icons.credit_card_rounded,
-                  title: 'Payment Methods',
-                  subtitle: 'Manage cards and payment',
-                  onTap: onPaymentTap,
-                ),
-                const SizedBox(height: 16),
-                _AccountListTileCard(
-                  icon: Icons.settings_rounded,
-                  title: 'Preferences',
-                  subtitle: 'App settings and preferences',
-                  onTap: onPreferencesTap,
+                const Positioned(
+                  left: 26,
+                  right: 26,
+                  bottom: -138,
+                  child: _ProfileUserCard(),
                 ),
               ],
             ),
+            const SizedBox(height: 154),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Account center',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF13201A),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Update your personal information and preferences',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF6C7E74),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: cardBorder),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 14,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE9F4EF),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.verified_user_rounded,
+                            color: Color(0xFF1D8E64),
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Security status: Verified and protected',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF294339),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  _AccountListTileCard(
+                    icon: Icons.person_outline_rounded,
+                    title: 'Account Settings',
+                    subtitle: 'Manage your account details',
+                    onTap: onAccountSettingsTap,
+                    titleColor: actionTitle,
+                    subtitleColor: actionSubtitle,
+                    iconColor: const Color(0xFF1A8A61),
+                    iconBackgroundColor: const Color(0xFFEAF5EF),
+                    borderColor: cardBorder,
+                    trailingColor: const Color(0xFF607167),
+                  ),
+                  const SizedBox(height: 14),
+                  _AccountListTileCard(
+                    icon: Icons.notifications_none_rounded,
+                    title: 'Notifications',
+                    subtitle: 'Manage notification preferences',
+                    onTap: onNotificationsTap,
+                    titleColor: actionTitle,
+                    subtitleColor: actionSubtitle,
+                    iconColor: const Color(0xFF1A8A61),
+                    iconBackgroundColor: const Color(0xFFEAF5EF),
+                    borderColor: cardBorder,
+                    trailingColor: const Color(0xFF607167),
+                  ),
+                  const SizedBox(height: 14),
+                  _AccountListTileCard(
+                    icon: Icons.credit_card_rounded,
+                    title: 'Payment Methods',
+                    subtitle: 'Manage cards and payment',
+                    onTap: onPaymentTap,
+                    titleColor: actionTitle,
+                    subtitleColor: actionSubtitle,
+                    iconColor: const Color(0xFF1A8A61),
+                    iconBackgroundColor: const Color(0xFFEAF5EF),
+                    borderColor: cardBorder,
+                    trailingColor: const Color(0xFF607167),
+                  ),
+                  const SizedBox(height: 14),
+                  _AccountListTileCard(
+                    icon: Icons.settings_rounded,
+                    title: 'Preferences',
+                    subtitle: 'App settings and preferences',
+                    onTap: onPreferencesTap,
+                    titleColor: actionTitle,
+                    subtitleColor: actionSubtitle,
+                    iconColor: const Color(0xFF1A8A61),
+                    iconBackgroundColor: const Color(0xFFEAF5EF),
+                    borderColor: cardBorder,
+                    trailingColor: const Color(0xFF607167),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileHeaderMetric extends StatelessWidget {
+  const _ProfileHeaderMetric({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: Colors.white.withValues(alpha: 0.82),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -1694,15 +1921,16 @@ class _ProfileUserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: const Color(0xFFDDE9E4)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.11),
-            blurRadius: 22,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -1710,45 +1938,33 @@ class _ProfileUserCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF2FAF7A),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'W',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                      ),
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF0E5C50), Color(0xFF29AE73)],
+                  ),
+                ),
+                child: Container(
+                  width: 68,
+                  height: 68,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF124A40),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'W',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                  Positioned(
-                    right: -2,
-                    bottom: -2,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF35C48B),
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(
-                        Icons.photo_camera_outlined,
-                        color: Colors.white,
-                        size: 12,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -1758,40 +1974,74 @@ class _ProfileUserCard extends StatelessWidget {
                     Text(
                       'Williamson',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF111111),
-                        fontSize: 20,
+                        color: const Color(0xFF111A16),
+                        fontSize: 21,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    _ProfileInfoLine(
-                      icon: Icons.mail_outline_rounded,
-                      text: 'williamson@safr.com',
+                    const SizedBox(height: 4),
+                    Text(
+                      'Premium traveler',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF6A7B74),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    const SizedBox(height: 3),
-                    _ProfileInfoLine(
-                      icon: Icons.phone_outlined,
-                      text: '+1 (555) 123-4567',
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEAF5EF),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.verified_rounded,
+                      color: Color(0xFF1E8F65),
+                      size: 14,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'Verified',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF1E8F65),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Divider(
-            color: const Color(0xFF111111).withValues(alpha: 0.1),
-            height: 1,
+          const SizedBox(height: 14),
+          _ProfileInfoLine(
+            icon: Icons.mail_outline_rounded,
+            text: 'williamson@safr.com',
+          ),
+          const SizedBox(height: 8),
+          _ProfileInfoLine(
+            icon: Icons.phone_outlined,
+            text: '+1 (555) 123-4567',
           ),
           const SizedBox(height: 16),
-          const Row(
-            children: [
+          Row(
+            children: const [
               Expanded(
                 child: _ProfileStatItem(value: '12', label: 'Trips'),
               ),
+              SizedBox(width: 8),
               Expanded(
                 child: _ProfileStatItem(value: '28', label: 'Reviews'),
               ),
+              SizedBox(width: 8),
               Expanded(
                 child: _ProfileStatItem(value: '156', label: 'Photos'),
               ),
@@ -1811,23 +2061,39 @@ class _ProfileInfoLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: const Color(0xFF7A7A7A)),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
-              color: const Color(0xFF7A7A7A),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6FAF8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE3ECE7)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAF5EF),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 14, color: const Color(0xFF1D8E64)),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF415149),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1840,26 +2106,34 @@ class _ProfileStatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            color: const Color(0xFF111111),
-            fontSize: 23,
-            fontWeight: FontWeight.w800,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 11),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6FAF8),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE3ECE7)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF143C33),
+              fontSize: 21,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: const Color(0xFF7A7A7A),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF65776F),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
